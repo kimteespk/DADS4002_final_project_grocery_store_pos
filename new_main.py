@@ -1,7 +1,7 @@
 import mysql.connector
 from getpass import getpass
 import pandas as pd
-#test
+
 # TODO Restructure code
     # TODO Change all input commanding body, to be in each there function
     # TODO Input just string
