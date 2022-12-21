@@ -101,6 +101,10 @@ def discount_ud():
             break
     return f"UPDATE product SET prod_discount = {1-(new_discount)/100} WHERE prod_id = {w_prod_id}"
 
+
+def sale_by_hour():
+    pass
+
 # Program Open
 
 
@@ -145,9 +149,9 @@ while True:
 
                 cmd01 = "INSERT INTO customer (cus_id,cus_name,cus_gender,cus_birth)\
                         VALUES (%s,%s,%s,%s)"
-                cmd02 = "INSERT INTO product (prod_id,prod_name,prod_price,prod_cat,prod_discount) \
+                cmd02 = "INSERT INTO product (prod_id,prod_name,prod_price,cat_id,prod_discount) \
                         VALUES (%s,%s,%s,%s,%s)"
-                cmd03 = "INSERT INTO transaction (bsk_id,bsk_prod_id,bsk_qnt,bsk_date,bsk_hour,bsk_cus_id) \
+                cmd03 = "INSERT INTO transaction (bsk_id,prod_id,qty,date,bsk_hour,bsk_cus_id) \
                         VALUES (%s,%s,%s,%s,%s,%s)"
 
                 # Option 01 : Register customer ID
@@ -254,6 +258,7 @@ while True:
         continue
     else:
         break
+
 
 # close
 
