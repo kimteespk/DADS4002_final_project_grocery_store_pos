@@ -2,12 +2,28 @@ import mysql.connector
 from getpass import getpass
 import pandas as pd
 
+# TODO Restructure code
+    # TODO Change all input commanding body, to be in each there function
+    # TODO Input just string
+# TODO un important code
+    # TODO Remove all writeing sql comamnd
+# TODO Change str to tuple
+# TODO Backup database
+
+
 cmd01 = """INSERT INTO customer (cus_name,cus_gender,cus_birth)\
         VALUES (%s,%s,STR_TO_DATE(%s,'%d-%m-%Y'))"""
 cmd02 = "INSERT INTO product (prod_id,prod_name,prod_price,prod_cat,prod_discount) \
         VALUES (%s,%s,%s,%s,%s)"
 cmd03 = "INSERT INTO transaction (bsk_id,bsk_prod_id,bsk_qnt,bsk_date,bsk_hour,bsk_cus_id) \
         VALUES (%s,%s,%s,%s,%s,%s)"
+
+def sql_execute(command_type, ):
+    #if command_type == 'customer':
+        # process here
+    #e
+    return
+    
 
 def db_connect():
     global my_db
@@ -110,14 +126,15 @@ def trade_id():
 
 
 def discount_ud():
-    while True:
-        try:
-            new_discount = int(input('New discount (%) : '))
-            w_prod_id = int(input('Product ID : '))
-        except Exception:
-            print('Wrong input, please try again.')
-        else:
-            break
+    try:
+        new_discount = int(input('New discount (%) : '))
+        w_prod_id = int(input('Product ID : '))
+    except Exception as e:
+        print(e)
+        print('Wrong input, please try again.')
+        discount_ud()
+        
+    # TODO execute sql command
     return f"UPDATE product SET prod_discount = {1-(new_discount)/100} WHERE prod_id = {w_prod_id}"
 
 
@@ -155,8 +172,7 @@ while True:
                 # Option 01 : Register customer ID
                 if x == '1':                
                     command_01_0 = register_cus()
-                    f.writelines(
-                        ['customer registeration : ', command_01_0, '\n'])
+                    #f.writelines('customer registeration : ', command_01_0, '\n'])
 
                 # Option 02 : Register new product ID
                 elif x == 2:
