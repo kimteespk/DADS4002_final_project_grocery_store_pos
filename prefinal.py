@@ -2,6 +2,7 @@ import mysql.connector
 from getpass import getpass
 import pandas as pd
 import config
+from datetime import datetime #import datetime for get now in transac
 
 # TODO Restructure code
 # TODO Change all input commanding body, to be in each there function
@@ -156,11 +157,17 @@ def trade_id(basket_id):
             bsk_id = basket_id
             bsk_prod_id = int(float(input('Product ID : ')))
             bsk_qnt = (int(input('Quantity : ')))
-            bsk_day = int(float(input('The day of Transaction (Only) : ')))
-            bsk_month = int(float(input('The month of Transaction :')))
-            bsk_year = int(float(input('The year of Transaction : ')))
-            bsk_hour = int(
-                (input('The hour of Transaction (between : 0-23) : ')))
+            # bsk_day = int(float(input('The day of Transaction (Only) : ')))
+            # bsk_month = int(float(input('The month of Transaction :')))
+            # bsk_year = int(float(input('The year of Transaction : ')))
+            # bsk_hour = int(
+            #     (input('The hour of Transaction (between : 0-23) : ')))
+
+            # Get datetime automaticlly
+            bsk_day = datetime.now().date().day
+            bsk_month = datetime.now().date().month
+            bsk_year = datetime.now().date().year
+            bsk_hour = datetime.now().hour
             if (bsk_hour < 0) or (bsk_hour > 23):
                 raise ValueError
             bsk_cus_id = int(float(input('Customer ID : ')))
@@ -224,20 +231,55 @@ def discount_ud():
     # TODO execute sql command
     # return f"UPDATE product SET prod_discount = {1-(new_discount)/100} WHERE prod_id = {w_prod_id}"
     
-def analytics(command, ):
-    if command == 1:
-        return
     
-    elif command == 2:
-        return
+def plot_function1(): # ฟังชันค์สำหรับพอท เริ่มตั้งแต่ sql command จนได้ข้อมูล จนถึงโชรูป plt.show()
+    print('Graph 1 plotted')
+    # เขียน sql command
+    # execute
+    # commit
+    # เซ็ตกราฟสำหรับพอท 
+    # plot.show()
+    return
+def plot_function2():
+    print('Graph 2 plotted')
+    return
+def plot_function3():
+    print('Graph 3 plotted')
+    return
+
+def analytics():
+    """ใช้เป็น Function ที่ไม่รับ param มา แล้วใช้การเก็บ input จากใน function ว่าจะ plot กราฟไหน
+    เพื่อที่เมื่อที่ต้องการ plot เพิ่ม จะได้ทำ Recursive เรียกซ้ำอีกครั้ง มาถามหาว่าจะplot อะไรต่อ
     
-    elif command == 3:
+    - โดยเริ่มแรกด้วยรับ input ละเคลียเคสทีจะออกจาก function หรือ เคสที่ใส่ input ผิด
+    - เรียกใช้ dictโดยมี command เป็น key และมันจะเรียกฟังชันค์สำหรับ plot กรฟานั้นๆ
+    - สุดท้าย ถ้าจะ plot ต่อ (y) ก็เรียกฟังค์ชันซ้ำอีกครั้ง
+    """
+    ##### Input Zone ####
+    command = input('Enter (1/2/3) to plot, (q) to quit:') # รับ input ใน function เลยจะได้เรียกซ้ำง่ายๆ
+    if command == 'q': # เคลียเคสออกก่อน จะได้จบเร็วๆ
         return
+    try: # ใช้ try เผื่อใส่ผิด จะได้ raise ให้มันเรียกฟังชั่นซ้ำ
+        command = int(command) 
+        if command > 3: # มากกว่า 3 ก็คือ invalid, raise ให้ไปหา ส่วนที่เรียกฟังชันซ้ำ
+            raise Exception
+    except Exception: # ส่วนที่เรียกฟังชั้นซ้ำ เวลาใสผิด จะได้มารวามอันเดียว
+        print('Invalid command, Enter again')
+        analytics()
     
-    else:
-        print('Invalid command')
-        new_command = int(input('Enter new command again'))
-        analytics(new_command)
+    # เอาฟังค์ชันสำหรับ plot แต่ละกราฟ มาใส่เป็น value ของ dict ไม่ต้องใส่() เพราะแค่เซ็ตตัวแปร
+    command_dict = {
+        1: plot_function1,
+        2: plot_function2,
+        3: plot_function3
+    }
+    command_dict[command]() # เรียกใช้ function ใน dict
+
+    #### Plot more graph ####
+    plot_more = input('Plot more graph (y) otherwise exit:').lower()
+    if plot_more == 'y':
+        analytics()
+    
     return
 
 def sum_sale(basket_id):
@@ -345,6 +387,7 @@ while True:
             # Option 04 : Data Analytics
 
             elif x == 4:
+                analytics()
                 pass
 
             # Option 05 : Update Discount
