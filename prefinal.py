@@ -232,19 +232,29 @@ def discount_ud():
     # return f"UPDATE product SET prod_discount = {1-(new_discount)/100} WHERE prod_id = {w_prod_id}"
     
 def analytics(command):
+
     if command == 1:
-        return
+        # query from db
+        pass
     
     elif command == 2:
-        return
+        pass
     
     elif command == 3:
-        return
+        pass
     
     else:
         print('Invalid command')
         new_command = int(input('Enter new command again'))
         analytics(new_command)
+    plot_more = input('Enter number (1/2/3) to plot more, else quit: ')
+    try:
+        command = int(plot_more) # ถ้าเปลี่ยนไม่ได้แสดงว่าไม่ใช่ 1,2,3
+        analytics(command)
+    except:
+        return
+        
+    
     return
 
 
