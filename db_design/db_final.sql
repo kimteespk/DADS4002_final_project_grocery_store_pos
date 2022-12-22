@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS `mystore`.`customer` (
   PRIMARY KEY (`cus_id`),
   UNIQUE INDEX `cust_id_UNIQUE` (`cus_id` ASC) VISIBLE)
 ENGINE = InnoDB
+AUTO_INCREMENT = 2
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -52,7 +53,7 @@ COLLATE = utf8mb4_0900_ai_ci;
 CREATE TABLE IF NOT EXISTS `mystore`.`product` (
   `prod_id` INT NOT NULL AUTO_INCREMENT,
   `prod_name` VARCHAR(45) NOT NULL,
-  `prod_price` INT NOT NULL,
+  `prod_price` FLOAT NOT NULL,
   `cat_id` INT NOT NULL,
   `prod_discount` FLOAT NULL DEFAULT NULL,
   PRIMARY KEY (`prod_id`),
@@ -71,18 +72,18 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mystore`.`transaction` (
   `bsk_id` INT NOT NULL,
-  `pd_id` INT NOT NULL,
+  `prod_id` INT NOT NULL,
   `qty` INT NOT NULL,
   `date` DATE NOT NULL,
   `hour` VARCHAR(2) NOT NULL,
   `cust_id` INT NOT NULL,
-  INDEX `pd_id_idx` (`pd_id` ASC) VISIBLE,
+  INDEX `pd_id_idx` (`prod_id` ASC) VISIBLE,
   INDEX `cust_id_idx` (`cust_id` ASC) VISIBLE,
   CONSTRAINT `cust_id`
     FOREIGN KEY (`cust_id`)
     REFERENCES `mystore`.`customer` (`cus_id`),
   CONSTRAINT `pd_id`
-    FOREIGN KEY (`pd_id`)
+    FOREIGN KEY (`prod_id`)
     REFERENCES `mystore`.`product` (`prod_id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
