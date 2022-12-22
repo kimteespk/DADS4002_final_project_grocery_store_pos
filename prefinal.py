@@ -150,10 +150,10 @@ def register_prod():
     # return f'({p_name},{p_price},{p_cat},{p_discount});'
 
 
-def trade_id():
+def trade_id(basket_id):
     while True:
         try:
-            bsk_id = int(float(input('Basket ID : ')))
+            bsk_id = basket_id
             bsk_prod_id = int(float(input('Product ID : ')))
             bsk_qnt = (int(input('Quantity : ')))
             bsk_day = int(float(input('The day of Transaction (Only) : ')))
@@ -240,6 +240,36 @@ def analytics(command, ):
         analytics(new_command)
     return
 
+def sum_sale(basket_id):
+
+    print('Calculating total payment...')
+    bsk_id = basket_id
+
+
+    command = f"""SELECT SUM(sale) FROM
+                (SELECT 
+                    p.prod_price,
+                    p.prod_discount,
+                    t.qty,
+                    t.cus_id,
+                    CASE 
+                        WHEN t.cus_id=0 THEN ROUND(p.prod_price*t.qty, 2)
+                        ELSE ROUND(p.prod_price*p.prod_discount*t.qty, 2)
+                        END as sale
+                FROM product as p
+                INNER JOIN transaction as t
+                USING (prod_id)
+                WHERE bsk_id = {bsk_id}) t"""
+    
+    my_cursor.execute(command)
+    for x in my_cursor.fetchall():
+        print(f'Total payment is {x[0]} Baht')
+
+def last_bsk_id():
+    command = """SELECT bsk_id FROM transaction ORDER BY bsk_id DESC LIMIT 1"""
+    my_cursor.execute(command)
+    for x in my_cursor.fetchall():
+        return x[0]+1
 
 db_connect()
 
@@ -275,21 +305,21 @@ while True:
             # Option 03 : Trading Operation
 
             elif x == 3:
+                basket_id = last_bsk_id()
                 while True:
                     ans = input('Are you a member? (y/n) : ').lower()
                     if ans == 'y':
-                        trade_id()
+                        trade_id(basket_id)
                         break
                     elif ans == 'n':
                         while True:
-                            ask = input(
-                                'Do you want to Register ? (y/n) : ').lower()
+                            ask = input('Do you want to Register ? (y/n) : ').lower()
                             if ask == 'y':
                                 register_cus()
-                                trade_id()
+                                trade_id(basket_id)
                                 break
                             elif ask == 'n':
-                                trade_id()
+                                trade_id(basket_id)
                                 break
                             else:
                                 print('please input (y/n) to confirm')
@@ -298,6 +328,19 @@ while True:
                     else:
                         print('please input (y/n) to confirm')
                         continue
+
+                while True:
+                    x = input('Do you want to buy more product ? (y/n): ')
+                    if x == 'y':
+                        trade_id(basket_id)
+                    elif x == 'n':
+                        break
+                    else:
+                        print('please input (y/n) to confirm')
+                        continue
+                    
+                sum_sale(basket_id)
+
 
             # Option 04 : Data Analytics
 
