@@ -76,11 +76,11 @@ CREATE TABLE IF NOT EXISTS `mystore`.`transaction` (
   `qty` INT NOT NULL,
   `date` DATE NOT NULL,
   `hour` VARCHAR(2) NOT NULL,
-  `cust_id` INT NOT NULL,
+  `cus_id` INT NOT NULL,
   INDEX `pd_id_idx` (`prod_id` ASC) VISIBLE,
-  INDEX `cust_id_idx` (`cust_id` ASC) VISIBLE,
+  INDEX `cust_id_idx` (`cus_id` ASC) VISIBLE,
   CONSTRAINT `cust_id`
-    FOREIGN KEY (`cust_id`)
+    FOREIGN KEY (`cus_id`)
     REFERENCES `mystore`.`customer` (`cus_id`),
   CONSTRAINT `pd_id`
     FOREIGN KEY (`prod_id`)
