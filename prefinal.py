@@ -1,6 +1,7 @@
 import mysql.connector
 from getpass import getpass
 import pandas as pd
+import config
 
 # TODO Restructure code
 # TODO Change all input commanding body, to be in each there function
@@ -30,29 +31,34 @@ def backup():
     command_customer = "SELECT * FROM customer"
     df_customer = pd.read_sql(command_customer, my_db)
     df_customer.to_csv("customer.csv", index=False, header=False)
-    
+
     # product table
     command_product = "SELECT * FROM product"
     df_product = pd.read_sql(command_product, my_db)
     df_product.to_csv("product.csv", index=False, header=False)
-    
+
     # transaction table
     command_transaction = "SELECT * FROM transaction"
     df_transaction = pd.read_sql(command_transaction, my_db)
     df_transaction.to_csv("transaction.csv", index=False, header=False)
+
+    # category table
+    command_category = "SELECT * FROM category"
+    df_category = pd.read_sql(command_category, my_db)
+    df_category.to_csv("category.csv", index=False, header=False)
 
 
 def db_connect():
     global my_db
     global my_cursor
     while True:
-        
+
         # user = input('User name : ')
         # pwd = getpass('Password : ')
-        user = 'root'
-        pwd = '1249'
-        port = '5500'
-        
+        user = config.user
+        pwd = config.pwd
+        port = config.port
+
         my_db, my_cursor = None, None
         try:
             my_db = mysql.connector.connect(
@@ -85,9 +91,10 @@ def register_cus():
 
             command = (f'{c_name} {c_surname}', c_gender,
                        f'{c_birth_day}-{c_birth_month}-{c_birth_year}')
-            
+
             while True:
-                confirm = input('do you want to confirm input? (y/n) : ').lower()
+                confirm = input(
+                    'do you want to confirm input? (y/n) : ').lower()
                 if confirm == 'y':
                     my_cursor.execute(cmd01, command)
                     my_db.commit()
@@ -120,7 +127,8 @@ def register_prod():
             command = (p_name, p_price, p_cat, p_discount)
 
             while True:
-                confirm = input('do you want to confirm input? (y/n) : ').lower()
+                confirm = input(
+                    'do you want to confirm input? (y/n) : ').lower()
                 if confirm == 'y':
                     my_cursor.execute(cmd02, command)
                     my_db.commit()
@@ -134,7 +142,7 @@ def register_prod():
 
         except Exception as e:
             print(e)
-            #print(e)
+            # print(e)
             print('wrong in put, please try again.')
         else:
             print('Successfully registered.')
@@ -151,7 +159,8 @@ def trade_id():
             bsk_day = int(float(input('The day of Transaction (Only) : ')))
             bsk_month = int(float(input('The month of Transaction :')))
             bsk_year = int(float(input('The year of Transaction : ')))
-            bsk_hour = int((input('The hour of Transaction (between : 0-23) : ')))
+            bsk_hour = int(
+                (input('The hour of Transaction (between : 0-23) : ')))
             if (bsk_hour < 0) or (bsk_hour > 23):
                 raise ValueError
             bsk_cus_id = int(float(input('Customer ID : ')))
@@ -160,7 +169,8 @@ def trade_id():
                        f'{bsk_day}-{bsk_month}-{bsk_year}', bsk_hour, bsk_cus_id)
 
             while True:
-                confirm = input('do you want to confirm input? (y/n) : ').lower()
+                confirm = input(
+                    'do you want to confirm input? (y/n) : ').lower()
                 if confirm == 'y':
                     my_cursor.execute(cmd03, command)
                     my_db.commit()
@@ -184,13 +194,14 @@ def trade_id():
 def discount_ud():
     while True:
         try:
-            new_discount = 1- float(input('New discount (%) : '))/100
+            new_discount = 1 - float(input('New discount (%) : '))/100
             prod_id = int(input('Product ID : '))
 
             command = f"UPDATE product SET prod_discount = {new_discount} WHERE prod_id = {prod_id}"
-            
+
             while True:
-                confirm = input('do you want to confirm input? (y/n) : ').lower()
+                confirm = input(
+                    'do you want to confirm input? (y/n) : ').lower()
                 if confirm == 'y':
                     my_cursor.execute(command)
                     my_db.commit()
@@ -255,7 +266,8 @@ while True:
                         break
                     elif ans == 'n':
                         while True:
-                            ask = input('Do you want to Register ? (y/n) : ').lower()
+                            ask = input(
+                                'Do you want to Register ? (y/n) : ').lower()
                             if ask == 'y':
                                 register_cus()
                                 trade_id()
