@@ -233,14 +233,18 @@ def discount_ud():
     
     
 def plot_function1(): # ฟังชันค์สำหรับพอท เริ่มตั้งแต่ sql command จนได้ข้อมูล จนถึงโชรูป plt.show()
+    print('Graph 1 plotted')
     # เขียน sql command
     # execute
     # commit
-    # เซ็ตกราฟสำหรับพอท
+    # เซ็ตกราฟสำหรับพอท 
+    # plot.show()
     return
 def plot_function2():
+    print('Graph 2 plotted')
     return
 def plot_function3():
+    print('Graph 3 plotted')
     return
 
 def analytics():
@@ -248,7 +252,7 @@ def analytics():
     เพื่อที่เมื่อที่ต้องการ plot เพิ่ม จะได้ทำ Recursive เรียกซ้ำอีกครั้ง มาถามหาว่าจะplot อะไรต่อ
     
     - โดยเริ่มแรกด้วยรับ input ละเคลียเคสทีจะออกจาก function หรือ เคสที่ใส่ input ผิด
-    - if elif เช็คเพื่อ plot กราฟแต่ละประเภท / ใช้ dict เรียกฟังชันในการ plot
+    - เรียกใช้ dictโดยมี command เป็น key และมันจะเรียกฟังชันค์สำหรับ plot กรฟานั้นๆ
     - สุดท้าย ถ้าจะ plot ต่อ (y) ก็เรียกฟังค์ชันซ้ำอีกครั้ง
     """
     ##### Input Zone ####
@@ -259,44 +263,20 @@ def analytics():
         command = int(command) 
         if command > 3: # มากกว่า 3 ก็คือ invalid, raise ให้ไปหา ส่วนที่เรียกฟังชันซ้ำ
             raise Exception
-    except Exception as e: # ส่วนที่เรียกฟังชั้นซ้ำ เวลาใสผิด จะได้มารวามอันเดียว
-        print(e) 
+    except Exception: # ส่วนที่เรียกฟังชั้นซ้ำ เวลาใสผิด จะได้มารวามอันเดียว
         print('Invalid command, Enter again')
         analytics()
     
     # เอาฟังค์ชันสำหรับ plot แต่ละกราฟ มาใส่เป็น value ของ dict ไม่ต้องใส่() เพราะแค่เซ็ตตัวแปร
     command_dict = {
-        1: 'functionสำหรับ plotรูป1',
-        2: 'functionสำหรับ plotรูป2',
-        3: 'functionสำหรับ plotรูป3'
+        1: plot_function1,
+        2: plot_function2,
+        3: plot_function3
     }
     command_dict[command]() # เรียกใช้ function ใน dict
-    # หรือถ้าเขียน function query กับplot ไว้แล้ว เอาฟังค์ชันมาแปะ สำหรับแต่ละ plot ละพอเข้า
-    # condition if elif ให้เรียกฟังต์ชันนั้นๆ
-    # เพื่อนำ ตัวแปล df ไปพอทหลังจากจบ if elif ในคำเดียวกันไปเลย
-    # if command == 1:
-        # query ข้อมูลจาก db มา
-        # เอามาใส่ใน df 
-        # config ตัว plot
-        # pass
-    
-    # elif command == 2:
-        # query from db
-        # convert to df form and assign it to df =
-        # config ตัว plot
-        # pass
-    
-    # elif command == 3:
-        # query from db 
-        # convert to df form and assign it to df =
-        # config ตัว plot
-        # pass
-
-    #### เรียกกราฟออกมา
-    # plt.show()
 
     #### Plot more graph ####
-    plot_more = input('Plot more graph (y/n) :').lower()
+    plot_more = input('Plot more graph (y) otherwise exit:').lower()
     if plot_more == 'y':
         analytics()
     
@@ -364,6 +344,7 @@ while True:
             # Option 04 : Data Analytics
 
             elif x == 4:
+                analytics()
                 pass
 
             # Option 05 : Update Discount
