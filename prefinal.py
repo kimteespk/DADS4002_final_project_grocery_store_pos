@@ -2,6 +2,7 @@ import mysql.connector
 from getpass import getpass
 import pandas as pd
 import config
+from datetime import datetime #import datetime for get now in transac
 
 # TODO Restructure code
 # TODO Change all input commanding body, to be in each there function
@@ -156,11 +157,17 @@ def trade_id():
             bsk_id = int(float(input('Basket ID : ')))
             bsk_prod_id = int(float(input('Product ID : ')))
             bsk_qnt = (int(input('Quantity : ')))
-            bsk_day = int(float(input('The day of Transaction (Only) : ')))
-            bsk_month = int(float(input('The month of Transaction :')))
-            bsk_year = int(float(input('The year of Transaction : ')))
-            bsk_hour = int(
-                (input('The hour of Transaction (between : 0-23) : ')))
+            # bsk_day = int(float(input('The day of Transaction (Only) : ')))
+            # bsk_month = int(float(input('The month of Transaction :')))
+            # bsk_year = int(float(input('The year of Transaction : ')))
+            # bsk_hour = int(
+            #     (input('The hour of Transaction (between : 0-23) : ')))
+
+            # Get datetime automaticlly
+            bsk_day = datetime.now().date().day
+            bsk_month = datetime.now().date().month
+            bsk_year = datetime.now().date().year
+            bsk_hour = datetime.now().hour
             if (bsk_hour < 0) or (bsk_hour > 23):
                 raise ValueError
             bsk_cus_id = int(float(input('Customer ID : ')))
@@ -224,7 +231,7 @@ def discount_ud():
     # TODO execute sql command
     # return f"UPDATE product SET prod_discount = {1-(new_discount)/100} WHERE prod_id = {w_prod_id}"
     
-def analytics(command, ):
+def analytics(command):
     if command == 1:
         return
     
