@@ -18,11 +18,11 @@ cmd02 = """INSERT INTO product (prod_name, prod_price, cat_id, prod_discount) \
 cmd03 = "INSERT INTO transaction (bsk_id, prod_id, qty, date, hour, cus_id) \
         VALUES (%s,%s,%s,STR_TO_DATE(%s,'%d-%m-%Y'),%s,%s)"
 
-def sql_execute(command_type, ):
-    # if command_type == 'customer':
-    # process here
-    # e
-    return
+# def sql_execute(command_type, ):
+#     # if command_type == 'customer':
+#     # process here
+#     # e
+#     return
 
 
 def backup():
@@ -50,7 +50,8 @@ def db_connect():
         # user = input('User name : ')
         # pwd = getpass('Password : ')
         user = 'root'
-        pwd = 'terter'
+        pwd = '1249'
+        port = '5500'
         
         my_db, my_cursor = None, None
         try:
@@ -58,6 +59,7 @@ def db_connect():
                 host='localhost',
                 user=user,
                 password=pwd,
+                port=port,
                 database='mystore')
             my_cursor = my_db.cursor()
             print('Successfully connected to database')
@@ -130,8 +132,9 @@ def register_prod():
             if confirm == 'n':
                 continue
 
-        except Exception:
+        except Exception as e:
             print(e)
+            #print(e)
             print('wrong in put, please try again.')
         else:
             print('Successfully registered.')
@@ -169,7 +172,7 @@ def trade_id():
             if confirm == 'n':
                 continue
 
-        except Exception:
+        except Exception as e:
             print(e)
             print('wrong input, please try again.')
 
