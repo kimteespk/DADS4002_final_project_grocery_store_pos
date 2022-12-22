@@ -195,7 +195,55 @@ def trade_id(basket_id):
 
         else:
             break
-    # return f"({bsk_id},{bsk_prod_id},{bsk_qnt},{bsk_day}-{bsk_month}-{bsk_year},{bsk_hour},{bsk_cus_id});"
+
+def trade_id(basket_id, member):
+    while True:
+        try:
+            bsk_id = basket_id
+            bsk_prod_id = int(float(input('Product ID : ')))
+            bsk_qnt = (int(input('Quantity : ')))
+            # bsk_day = int(float(input('The day of Transaction (Only) : ')))
+            # bsk_month = int(float(input('The month of Transaction :')))
+            # bsk_year = int(float(input('The year of Transaction : ')))
+            # bsk_hour = int(
+            #     (input('The hour of Transaction (between : 0-23) : ')))
+
+            # Get datetime automaticlly
+            bsk_day = datetime.now().date().day
+            bsk_month = datetime.now().date().month
+            bsk_year = datetime.now().date().year
+            bsk_hour = datetime.now().hour
+
+            if member == 'y':
+                bsk_cus_id = int(float(input('Customer ID : ')))
+                command = (bsk_id, bsk_prod_id, bsk_qnt,
+                        f'{bsk_day}-{bsk_month}-{bsk_year}', bsk_hour, bsk_cus_id)
+            elif member == 'n':
+                cmd03 = "INSERT INTO transaction (bsk_id, prod_id, qty, date, hour) \
+                        VALUES (%s,%s,%s,STR_TO_DATE(%s,'%d-%m-%Y'),%s)"
+                command = (bsk_id, bsk_prod_id, bsk_qnt,
+                        f'{bsk_day}-{bsk_month}-{bsk_year}', bsk_hour)
+
+            while True:
+                confirm = input(
+                    'do you want to confirm input? (y/n) : ').lower()
+                if confirm == 'y':
+                    my_cursor.execute(cmd03, command)
+                    my_db.commit()
+                    break
+                if confirm == 'n':
+                    break
+                else:
+                    print('please input (y/n) to confirm')
+            if confirm == 'n':
+                continue
+
+        except Exception as e:
+            print(e)
+            print('wrong input, please try again.')
+
+        else:
+            break
 
 
 def discount_ud():
@@ -295,7 +343,7 @@ def sum_sale(basket_id):
                     t.qty,
                     t.cus_id,
                     CASE 
-                        WHEN t.cus_id=0 THEN ROUND(p.prod_price*t.qty, 2)
+                        WHEN t.cus_id IS NULL THEN ROUND(p.prod_price*t.qty, 2)
                         ELSE ROUND(p.prod_price*p.prod_discount*t.qty, 2)
                         END as sale
                 FROM product as p
@@ -351,17 +399,17 @@ while True:
                 while True:
                     ans = input('Are you a member? (y/n) : ').lower()
                     if ans == 'y':
-                        trade_id(basket_id)
+                        trade_id(basket_id, ans)
                         break
                     elif ans == 'n':
                         while True:
                             ask = input('Do you want to Register ? (y/n) : ').lower()
                             if ask == 'y':
                                 register_cus()
-                                trade_id(basket_id)
+                                trade_id(basket_id, ask)
                                 break
                             elif ask == 'n':
-                                trade_id(basket_id)
+                                trade_id(basket_id, ask)
                                 break
                             else:
                                 print('please input (y/n) to confirm')
@@ -374,7 +422,7 @@ while True:
                 while True:
                     x = input('Do you want to buy more product ? (y/n): ')
                     if x == 'y':
-                        trade_id(basket_id)
+                        trade_id(basket_id, ask)
                     elif x == 'n':
                         break
                     else:
