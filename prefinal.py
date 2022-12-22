@@ -223,6 +223,22 @@ def discount_ud():
 
     # TODO execute sql command
     # return f"UPDATE product SET prod_discount = {1-(new_discount)/100} WHERE prod_id = {w_prod_id}"
+    
+def analytics(command, ):
+    if command == 1:
+        return
+    
+    elif command == 2:
+        return
+    
+    elif command == 3:
+        return
+    
+    else:
+        print('Invalid command')
+        new_command = int(input('Enter new command again'))
+        analytics(new_command)
+    return
 
 
 db_connect()
