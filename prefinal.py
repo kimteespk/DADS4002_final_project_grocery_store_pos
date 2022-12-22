@@ -231,29 +231,74 @@ def discount_ud():
     # TODO execute sql command
     # return f"UPDATE product SET prod_discount = {1-(new_discount)/100} WHERE prod_id = {w_prod_id}"
     
-def analytics(command):
+    
+def plot_function1(): # ฟังชันค์สำหรับพอท เริ่มตั้งแต่ sql command จนได้ข้อมูล จนถึงโชรูป plt.show()
+    # เขียน sql command
+    # execute
+    # commit
+    # เซ็ตกราฟสำหรับพอท
+    return
+def plot_function2():
+    return
+def plot_function3():
+    return
 
-    if command == 1:
-        # query from db
-        pass
+def analytics():
+    """ใช้เป็น Function ที่ไม่รับ param มา แล้วใช้การเก็บ input จากใน function ว่าจะ plot กราฟไหน
+    เพื่อที่เมื่อที่ต้องการ plot เพิ่ม จะได้ทำ Recursive เรียกซ้ำอีกครั้ง มาถามหาว่าจะplot อะไรต่อ
     
-    elif command == 2:
-        pass
-    
-    elif command == 3:
-        pass
-    
-    else:
-        print('Invalid command')
-        new_command = int(input('Enter new command again'))
-        analytics(new_command)
-    plot_more = input('Enter number (1/2/3) to plot more, else quit: ')
-    try:
-        command = int(plot_more) # ถ้าเปลี่ยนไม่ได้แสดงว่าไม่ใช่ 1,2,3
-        analytics(command)
-    except:
+    - โดยเริ่มแรกด้วยรับ input ละเคลียเคสทีจะออกจาก function หรือ เคสที่ใส่ input ผิด
+    - if elif เช็คเพื่อ plot กราฟแต่ละประเภท / ใช้ dict เรียกฟังชันในการ plot
+    - สุดท้าย ถ้าจะ plot ต่อ (y) ก็เรียกฟังค์ชันซ้ำอีกครั้ง
+    """
+    ##### Input Zone ####
+    command = input('Enter (1/2/3) to plot, (q) to quit:') # รับ input ใน function เลยจะได้เรียกซ้ำง่ายๆ
+    if command == 'q': # เคลียเคสออกก่อน จะได้จบเร็วๆ
         return
-        
+    try: # ใช้ try เผื่อใส่ผิด จะได้ raise ให้มันเรียกฟังชั่นซ้ำ
+        command = int(command) 
+        if command > 3: # มากกว่า 3 ก็คือ invalid, raise ให้ไปหา ส่วนที่เรียกฟังชันซ้ำ
+            raise Exception
+    except Exception as e: # ส่วนที่เรียกฟังชั้นซ้ำ เวลาใสผิด จะได้มารวามอันเดียว
+        print(e) 
+        print('Invalid command, Enter again')
+        analytics()
+    
+    # เอาฟังค์ชันสำหรับ plot แต่ละกราฟ มาใส่เป็น value ของ dict ไม่ต้องใส่() เพราะแค่เซ็ตตัวแปร
+    command_dict = {
+        1: 'functionสำหรับ plotรูป1',
+        2: 'functionสำหรับ plotรูป2',
+        3: 'functionสำหรับ plotรูป3'
+    }
+    command_dict[command]() # เรียกใช้ function ใน dict
+    # หรือถ้าเขียน function query กับplot ไว้แล้ว เอาฟังค์ชันมาแปะ สำหรับแต่ละ plot ละพอเข้า
+    # condition if elif ให้เรียกฟังต์ชันนั้นๆ
+    # เพื่อนำ ตัวแปล df ไปพอทหลังจากจบ if elif ในคำเดียวกันไปเลย
+    # if command == 1:
+        # query ข้อมูลจาก db มา
+        # เอามาใส่ใน df 
+        # config ตัว plot
+        # pass
+    
+    # elif command == 2:
+        # query from db
+        # convert to df form and assign it to df =
+        # config ตัว plot
+        # pass
+    
+    # elif command == 3:
+        # query from db 
+        # convert to df form and assign it to df =
+        # config ตัว plot
+        # pass
+
+    #### เรียกกราฟออกมา
+    # plt.show()
+
+    #### Plot more graph ####
+    plot_more = input('Plot more graph (y/n) :').lower()
+    if plot_more == 'y':
+        analytics()
     
     return
 
