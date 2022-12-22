@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS `mystore`.`customer` (
   PRIMARY KEY (`cus_id`),
   UNIQUE INDEX `cust_id_UNIQUE` (`cus_id` ASC) VISIBLE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 2
+AUTO_INCREMENT = 10
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -63,6 +63,7 @@ CREATE TABLE IF NOT EXISTS `mystore`.`product` (
     FOREIGN KEY (`cat_id`)
     REFERENCES `mystore`.`category` (`cat_id`))
 ENGINE = InnoDB
+AUTO_INCREMENT = 3
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -76,7 +77,7 @@ CREATE TABLE IF NOT EXISTS `mystore`.`transaction` (
   `qty` INT NOT NULL,
   `date` DATE NOT NULL,
   `hour` VARCHAR(2) NOT NULL,
-  `cus_id` INT NOT NULL,
+  `cus_id` INT NULL DEFAULT NULL,
   INDEX `pd_id_idx` (`prod_id` ASC) VISIBLE,
   INDEX `cust_id_idx` (`cus_id` ASC) VISIBLE,
   CONSTRAINT `cust_id`
