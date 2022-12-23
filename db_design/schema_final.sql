@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `mystore`.`category` (
   PRIMARY KEY (`cat_id`),
   UNIQUE INDEX `cat_id_UNIQUE` (`cat_id` ASC) VISIBLE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 3
+AUTO_INCREMENT = 11
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -37,12 +37,12 @@ COLLATE = utf8mb4_0900_ai_ci;
 CREATE TABLE IF NOT EXISTS `mystore`.`customer` (
   `cus_id` INT NOT NULL AUTO_INCREMENT,
   `cus_name` VARCHAR(45) NOT NULL,
-  `cus_gender` VARCHAR(6) NOT NULL,
-  `cus_birth` DATE NOT NULL,
+  `cus_gender` VARCHAR(6) NULL DEFAULT NULL,
+  `cus_birth` DATE NULL DEFAULT NULL,
   PRIMARY KEY (`cus_id`),
   UNIQUE INDEX `cust_id_UNIQUE` (`cus_id` ASC) VISIBLE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 10
+AUTO_INCREMENT = 38
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -63,24 +63,24 @@ CREATE TABLE IF NOT EXISTS `mystore`.`product` (
     FOREIGN KEY (`cat_id`)
     REFERENCES `mystore`.`category` (`cat_id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 3
+AUTO_INCREMENT = 32
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
 
 -- -----------------------------------------------------
--- Table `mystore`.`transaction`
+-- Table `mystore`.`transactions`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mystore`.`transaction` (
+CREATE TABLE IF NOT EXISTS `mystore`.`transactions` (
   `bsk_id` INT NOT NULL,
   `prod_id` INT NOT NULL,
   `qty` INT NOT NULL,
   `date` DATE NOT NULL,
-  `hour` VARCHAR(2) NOT NULL,
+  `hour` INT NOT NULL,
   `cus_id` INT NULL DEFAULT NULL,
   INDEX `pd_id_idx` (`prod_id` ASC) VISIBLE,
-  INDEX `cust_id_idx` (`cus_id` ASC) VISIBLE,
-  CONSTRAINT `cust_id`
+  INDEX `cus_id_idx` (`cus_id` ASC) VISIBLE,
+  CONSTRAINT `cus_id`
     FOREIGN KEY (`cus_id`)
     REFERENCES `mystore`.`customer` (`cus_id`),
   CONSTRAINT `pd_id`
