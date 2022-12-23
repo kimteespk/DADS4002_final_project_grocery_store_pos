@@ -17,7 +17,7 @@ cmd01 = """INSERT INTO customer (cus_name, cus_gender, cus_birth)\
         VALUES (%s,%s,STR_TO_DATE(%s,'%d-%m-%Y'))"""
 cmd02 = """INSERT INTO product (prod_name, prod_price, cat_id, prod_discount) \
         VALUES (%s,%s,%s,%s)"""
-cmd03 = "INSERT INTO transaction (bsk_id, prod_id, qty, date, hour, cus_id) \
+cmd03 = "INSERT INTO transactions (bsk_id, prod_id, qty, date, hour, cus_id) \
         VALUES (%s,%s,%s,STR_TO_DATE(%s,'%d-%m-%Y'),%s,%s)"
 
 # def sql_execute(command_type, ):
@@ -38,10 +38,10 @@ def backup():
     df_product = pd.read_sql(command_product, my_db)
     df_product.to_csv("product.csv", index=False, header=False)
 
-    # transaction table
-    command_transaction = "SELECT * FROM transaction"
-    df_transaction = pd.read_sql(command_transaction, my_db)
-    df_transaction.to_csv("transaction.csv", index=False, header=False)
+    # transactions table
+    command_transactions = "SELECT * FROM transactions"
+    df_transactions = pd.read_sql(command_transactions, my_db)
+    df_transactions.to_csv("transactions.csv", index=False, header=False)
 
     # category table
     command_category = "SELECT * FROM category"
@@ -219,7 +219,7 @@ def trade_id(basket_id, member):
                 command = (bsk_id, bsk_prod_id, bsk_qnt,
                         f'{bsk_day}-{bsk_month}-{bsk_year}', bsk_hour, bsk_cus_id)
             elif member == 'n':
-                cmd03 = "INSERT INTO transaction (bsk_id, prod_id, qty, date, hour) \
+                cmd03 = "INSERT INTO transactions (bsk_id, prod_id, qty, date, hour) \
                         VALUES (%s,%s,%s,STR_TO_DATE(%s,'%d-%m-%Y'),%s)"
                 command = (bsk_id, bsk_prod_id, bsk_qnt,
                         f'{bsk_day}-{bsk_month}-{bsk_year}', bsk_hour)
@@ -347,7 +347,7 @@ def sum_sale(basket_id):
                         ELSE ROUND(p.prod_price*p.prod_discount*t.qty, 2)
                         END as sale
                 FROM product as p
-                INNER JOIN transaction as t
+                INNER JOIN transactions as t
                 USING (prod_id)
                 WHERE bsk_id = {bsk_id}) t"""
     
@@ -356,7 +356,7 @@ def sum_sale(basket_id):
         print(f'Total payment is {x[0]} Baht')
 
 def last_bsk_id():
-    command = """SELECT bsk_id FROM transaction ORDER BY bsk_id DESC LIMIT 1"""
+    command = """SELECT bsk_id FROM transactions ORDER BY bsk_id DESC LIMIT 1"""
     my_cursor.execute(command)
     for x in my_cursor.fetchall():
         return x[0]+1
