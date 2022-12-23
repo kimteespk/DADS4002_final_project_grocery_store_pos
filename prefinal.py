@@ -38,10 +38,10 @@ def backup():
     df_product = pd.read_sql(command_product, my_db)
     df_product.to_csv("product.csv", index=False, header=False)
 
-    # transactions table
+    # transaction table
     command_transactions = "SELECT * FROM transactions"
     df_transactions = pd.read_sql(command_transactions, my_db)
-    df_transactions.to_csv("transactions.csv", index=False, header=False)
+    df_transactions.to_csv("transaction.csv", index=False, header=False)
 
     # category table
     command_category = "SELECT * FROM category"
