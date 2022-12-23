@@ -1,5 +1,7 @@
 import mysql.connector
 from getpass import getpass
+from matplotlib import pyplot as plt
+import seaborn as sns
 import pandas as pd
 import config
 from datetime import datetime #import datetime for get now in transac
@@ -114,8 +116,6 @@ def register_cus():
             print('Successfully registered.')
             break
 
-    # return f"({c_name} {c_surname},{c_gender},{c_birth_day}-{c_birth_month}-{c_birth_year});"
-
 
 def register_prod():
     while True:
@@ -148,53 +148,7 @@ def register_prod():
         else:
             print('Successfully registered.')
             break
-    # return f'({p_name},{p_price},{p_cat},{p_discount});'
 
-
-def trade_id(basket_id):
-    while True:
-        try:
-            bsk_id = basket_id
-            bsk_prod_id = int(float(input('Product ID : ')))
-            bsk_qnt = (int(input('Quantity : ')))
-            # bsk_day = int(float(input('The day of Transaction (Only) : ')))
-            # bsk_month = int(float(input('The month of Transaction :')))
-            # bsk_year = int(float(input('The year of Transaction : ')))
-            # bsk_hour = int(
-            #     (input('The hour of Transaction (between : 0-23) : ')))
-
-            # Get datetime automaticlly
-            bsk_day = datetime.now().date().day
-            bsk_month = datetime.now().date().month
-            bsk_year = datetime.now().date().year
-            bsk_hour = datetime.now().hour
-            if (bsk_hour < 0) or (bsk_hour > 23):
-                raise ValueError
-            bsk_cus_id = int(float(input('Customer ID : ')))
-
-            command = (bsk_id, bsk_prod_id, bsk_qnt,
-                       f'{bsk_day}-{bsk_month}-{bsk_year}', bsk_hour, bsk_cus_id)
-
-            while True:
-                confirm = input(
-                    'do you want to confirm input? (y/n) : ').lower()
-                if confirm == 'y':
-                    my_cursor.execute(cmd03, command)
-                    my_db.commit()
-                    break
-                if confirm == 'n':
-                    break
-                else:
-                    print('please input (y/n) to confirm')
-            if confirm == 'n':
-                continue
-
-        except Exception as e:
-            print(e)
-            print('wrong input, please try again.')
-
-        else:
-            break
 
 def trade_id(basket_id, member):
     while True:
@@ -275,25 +229,156 @@ def discount_ud():
         else:
             print('Successfully updated.')
             break
-
-    # TODO execute sql command
-    # return f"UPDATE product SET prod_discount = {1-(new_discount)/100} WHERE prod_id = {w_prod_id}"
     
     
 def plot_function1(): # ฟังชันค์สำหรับพอท เริ่มตั้งแต่ sql command จนได้ข้อมูล จนถึงโชรูป plt.show()
     print('Graph 1 plotted')
-    # เขียน sql command
-    # execute
-    # commit
-    # เซ็ตกราฟสำหรับพอท 
-    # plot.show()
-    return
+
+    sql_commands = """SELECT
+                            hour,
+                            ROUND(sum(sale), 2) AS total_sale
+                        FROM
+                        (SELECT 
+                            t.hour,
+                            CASE 
+                                WHEN t.cus_id IS NULL THEN ROUND(p.prod_price*t.qty, 2)
+                                ELSE ROUND(p.prod_price*p.prod_discount*t.qty, 2)
+                                END as sale
+                        FROM product as p
+                        INNER JOIN transactions as t
+                        USING (prod_id)) t
+                        GROUP BY hour
+                        ORDER BY hour;"""
+
+    df = pd.read_sql(sql_commands, my_db)
+
+    plt.plot(df['hour'], df['total_sale'])
+    plt.title('Total Sale by hour')
+    plt.xlabel('Sale')
+    plt.ylabel('Hour')
+    plt.show()
+
+
 def plot_function2():
     print('Graph 2 plotted')
-    return
+
+    sql_commands1 = """SELECT
+                            prod_name,
+                            ROUND(SUM(sale), 2) as total_sale
+                        FROM
+                        (SELECT 
+                            p.prod_name,
+                            CASE 
+                                WHEN t.cus_id IS NULL THEN ROUND(p.prod_price*t.qty, 2)
+                                ELSE ROUND(p.prod_price*p.prod_discount*t.qty, 2)
+                                END as sale
+                        FROM product as p
+                        INNER JOIN transactions as t
+                        USING (prod_id)
+                        WHERE t.cus_id IS NOT NULL) t
+                        GROUP BY prod_name
+                        ORDER BY total_sale DESC
+                        LIMIT 10;"""
+
+    df_member = pd.read_sql(sql_commands1, my_db)
+
+    sql_commands2 = """SELECT
+                            prod_name,
+                            ROUND(SUM(sale), 2) as total_sale
+                        FROM
+                        (SELECT 
+                            p.prod_name,
+                            CASE 
+                                WHEN t.cus_id IS NULL THEN ROUND(p.prod_price*t.qty, 2)
+                                ELSE ROUND(p.prod_price*p.prod_discount*t.qty, 2)
+                                END as sale
+                        FROM product as p
+                        INNER JOIN transactions as t
+                        USING (prod_id)
+                        WHERE t.cus_id IS NULL) t
+                        GROUP BY prod_name
+                        ORDER BY total_sale DESC
+                        LIMIT 10;"""
+
+    df_nonmember = pd.read_sql(sql_commands2, my_db)
+
+    fig = plt.figure(figsize = (10, 5))
+
+    plt.subplot(1, 2, 1)
+    plt.bar(df_member['prod_name'], df_member['total_sale'])
+    plt.xticks(rotation=90)
+    plt.title('Most Spending Product by Member')
+    plt.xlabel('Product')
+    plt.ylabel('Sale')
+
+
+    plt.subplot(1, 2, 2)
+    plt.bar(df_nonmember['prod_name'], df_nonmember['total_sale'])
+    plt.xticks(rotation=90)
+    plt.title('Most Spending Product by Non-Member')
+    plt.xlabel('Product')
+    plt.ylabel('Sale')
+
+    plt.show()
+
 def plot_function3():
     print('Graph 3 plotted')
-    return
+    sql_commands = """SELECT
+                            hour,
+                            prod_name,
+                            ROUND(SUM(sale), 2) as total_sale
+                        FROM
+                        (SELECT 
+                            t.hour,
+                            p.prod_name,
+                            CASE 
+                                WHEN t.cus_id IS NULL THEN ROUND(p.prod_price*t.qty, 2)
+                                ELSE ROUND(p.prod_price*p.prod_discount*t.qty, 2)
+                                END as sale
+                        FROM product as p
+                        INNER JOIN transactions as t
+                        USING (prod_id)) t
+                        GROUP BY hour, prod_name
+                        ORDER BY total_sale DESC;"""
+
+    df = pd.read_sql(sql_commands, my_db)
+
+    fig = plt.figure(figsize = (10, 5))
+    ax = sns.lineplot(df, x=df['hour'], y=df['total_sale'], hue=df['prod_name'])
+    sns.move_legend(ax, "upper right", bbox_to_anchor=(1, 1))
+    plt.title('Product Sale by hour')
+    plt.xlabel('Sale')
+    plt.ylabel('Hour')
+    plt.show()
+
+def plot_function4():
+    print('Graph 4 plotted')
+
+    sql_commands = """SELECT
+                        cus_id,
+                        ROUND(SUM(sale), 2) as total_sale
+                    FROM
+                    (SELECT 
+                        t.cus_id,
+                        CASE 
+                            WHEN t.cus_id IS NULL THEN ROUND(p.prod_price*t.qty, 2)
+                            ELSE ROUND(p.prod_price*p.prod_discount*t.qty, 2)
+                            END as sale
+                    FROM product as p
+                    INNER JOIN transactions as t
+                    USING (prod_id)) t
+                    GROUP BY cus_id
+                    ORDER BY total_sale DESC
+                    LIMIT 10;"""
+
+    df = pd.read_sql(sql_commands, my_db)
+    df['cus_id'] = df['cus_id'].astype(str)
+
+    plt.bar(df['cus_id'], df['total_sale'])
+    plt.title('Most Spending Customer')
+    plt.xlabel('Customer ID')
+    plt.ylabel('Sale')
+    plt.show()
 
 def analytics():
     """ใช้เป็น Function ที่ไม่รับ param มา แล้วใช้การเก็บ input จากใน function ว่าจะ plot กราฟไหน
@@ -304,14 +389,14 @@ def analytics():
     - สุดท้าย ถ้าจะ plot ต่อ (y) ก็เรียกฟังค์ชันซ้ำอีกครั้ง
     """
     ##### Input Zone ####
-    command = input('Enter (1/2/3) to plot, (q) to quit:') # รับ input ใน function เลยจะได้เรียกซ้ำง่ายๆ
+    command = input('Enter (1/2/3/4) to plot, (q) to exit:') # รับ input ใน function เลยจะได้เรียกซ้ำง่ายๆ
     if command == 'q': # เคลียเคสออกก่อน จะได้จบเร็วๆ
         return
     try: # ใช้ try เผื่อใส่ผิด จะได้ raise ให้มันเรียกฟังชั่นซ้ำ
         command = int(command) 
-        if command > 3: # มากกว่า 3 ก็คือ invalid, raise ให้ไปหา ส่วนที่เรียกฟังชันซ้ำ
+        if command > 4 or command < 1: # มากกว่า 3 ก็คือ invalid, raise ให้ไปหา ส่วนที่เรียกฟังชันซ้ำ
             raise Exception
-    except Exception: # ส่วนที่เรียกฟังชั้นซ้ำ เวลาใสผิด จะได้มารวามอันเดียว
+    except Exception : # ส่วนที่เรียกฟังชั้นซ้ำ เวลาใสผิด จะได้มารวามอันเดียว
         print('Invalid command, Enter again')
         analytics()
     
@@ -319,7 +404,8 @@ def analytics():
     command_dict = {
         1: plot_function1,
         2: plot_function2,
-        3: plot_function3
+        3: plot_function3,
+        4: plot_function4
     }
     command_dict[command]() # เรียกใช้ function ใน dict
 
@@ -327,8 +413,7 @@ def analytics():
     plot_more = input('Plot more graph (y) otherwise exit:').lower()
     if plot_more == 'y':
         analytics()
-    
-    return
+
 
 def sum_sale(basket_id):
 
@@ -436,7 +521,6 @@ while True:
 
             elif x == 4:
                 analytics()
-                pass
 
             # Option 05 : Update Discount
 
