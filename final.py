@@ -1,36 +1,31 @@
 import mysql.connector
-from getpass import getpass
+#from getpass import getpass
 from matplotlib import pyplot as plt
 import pandas as pd
-import config
+import config # ไฟล์ config.py ที่จะเก็บ user, pwd, port สำหรับเชื่อมต่อ db
 from datetime import datetime #import datetime for get now in transac
 
-# TODO Restructure code
-# TODO Change all input commanding body, to be in each there function
-# TODO Input just string
-# TODO un important code
-# TODO Remove all writeing sql comamnd
-# TODO Change str to tuple
-# TODO Backup database
 
 
+"""
+SQL Command หลักที่จะใช้ในการ Insert ข้อมูลเข้า DB
+"""
+# Insert ข้อมูลเข้า Customer table ในตอนสมัครสมาชิก
 cmd01 = """INSERT INTO customer (cus_name, cus_gender, cus_birth)\
         VALUES (%s,%s,STR_TO_DATE(%s,'%d-%m-%Y'))"""
+# Insert ข้อมูลเข้า Product table เมื่อเพิ่มสินค้าใหม่
 cmd02 = """INSERT INTO product (prod_name, prod_price, cat_id, prod_discount) \
         VALUES (%s,%s,%s,%s)"""
+# Insert ข้อมูลเข้า Transactions table เมื่อมีการซื้อสินค้า
 cmd03 = "INSERT INTO transactions (bsk_id, prod_id, qty, date, hour, cus_id) \
         VALUES (%s,%s,%s,STR_TO_DATE(%s,'%d-%m-%Y'),%s,%s)"
 
-# def sql_execute(command_type, ):
-#     # if command_type == 'customer':
-#     # process here
-#     # e
-#     return
 
 
 def backup():
+    """Function สำหรับการ Backup ข้อมูลลงเป็นไฟล์ CSV โดยการใช้ fucntion read_sql, to_csv ของ pandas"""
     # customer table
-    command_customer = "SELECT * FROM customer"
+    command_customer = "SELECT * FROM customer" # 
     df_customer = pd.read_sql(command_customer, my_db)
     df_customer.to_csv("customer.csv", index=False, header=False)
 
@@ -51,6 +46,7 @@ def backup():
 
 
 def db_connect():
+    """Function สำหรับเชื่อต่อ DB """
     global my_db
     global my_cursor
     while True:
@@ -81,6 +77,7 @@ def db_connect():
 
 
 def register_cus():
+    """Function สำหรับสมัครสมาชิกใหม่ จะถูกเรียกจาก input หลัก และมาเก็บ input รวมถึงการ insert เข้า db"""
     global cmd01
     while True:
         try:
@@ -117,6 +114,7 @@ def register_cus():
 
 
 def register_prod():
+    """Function สำหรับการลงทะเบียนสินค้าใหม่"""
     global cmd02
     while True:
         try:
@@ -151,6 +149,7 @@ def register_prod():
 
 
 def trade_id(basket_id, member):
+    """Function สำหรับซื้อสินค้า"""
     global cmd03
     while True:
         try:
@@ -163,7 +162,7 @@ def trade_id(basket_id, member):
             # bsk_hour = int(
             #     (input('The hour of Transaction (between : 0-23) : ')))
 
-            # Get datetime automaticlly
+            # Get datetime automaticlly ด้วย datetime.now() จาก datetime lib
             bsk_day = datetime.now().date().day
             bsk_month = datetime.now().date().month
             bsk_year = datetime.now().date().year
@@ -202,6 +201,7 @@ def trade_id(basket_id, member):
 
 
 def discount_ud():
+    """Function สำหรับการแก้ไขส่วนลดสำหรับสมาชิก ใช้สำหรับจะแก้ไขเมื่อสินค้าอยู่ใน DB อยู่แล้ว"""
     while True:
         try:
             new_discount = 1 - float(input('New discount (%) : '))/100
@@ -281,7 +281,7 @@ def plot_function2():
                         ORDER BY total_sale DESC
                         LIMIT 10;"""
 
-    df_member = pd.read_sql(sql_commands1, my_db)
+    df_member = pd.read_sql(sql_commands1, my_db) # raed_sq(command, db_object)
 
     sql_commands2 = """SELECT
                             prod_name,
@@ -436,6 +436,7 @@ def sum_sale(basket_id):
         print(f'Total payment is {x[0]} Baht')
 
 def last_bsk_id():
+    """Function สำหรับดึง basket id ล่าสุดมาสำหรับการซื้อสินค้าใหม่ในแต่ละ transaction"""
     command = """SELECT bsk_id FROM transactions ORDER BY bsk_id DESC LIMIT 1"""
     my_cursor.execute(command)
     for x in my_cursor.fetchall():
@@ -465,15 +466,12 @@ while True:
             # Option 01 : Register customer ID
             if x == 1:
                 register_cus()
-                # f.writelines('customer registeration : ', command_01_0, '\n'])
 
             # Option 02 : Register new product ID
             elif x == 2:
                 register_prod()
-                # f.writelines(['product registeration : ', command_02, '\n'])
 
             # Option 03 : Trading Operation
-
             elif x == 3:
                 basket_id = last_bsk_id()
                 while True:
@@ -509,7 +507,7 @@ while True:
                         print('please input (y/n) to confirm')
                         continue
                     
-                sum_sale(basket_id)
+                sum_sale(basket_id) # calculate total amount
 
 
             # Option 04 : Data Analytics
@@ -539,7 +537,7 @@ while True:
         print(e)
         print('Enter command again')
 
-backup()
+backup() # backup ไป csv ก่อนจบการทำงานโปรแกรม
 
 my_cursor.close()
 my_db.close()
