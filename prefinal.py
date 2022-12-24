@@ -66,6 +66,7 @@ def db_connect():
             my_db = mysql.connector.connect(
                 user=user,
                 password=pwd,
+                port=port,
                 database='mystore')
             my_cursor = my_db.cursor()
             print('Successfully connected to database')
@@ -80,6 +81,7 @@ def db_connect():
 
 
 def register_cus():
+    global cmd01
     while True:
         try:
             c_name = input('Customer Name : ')
@@ -115,6 +117,7 @@ def register_cus():
 
 
 def register_prod():
+    global cmd02
     while True:
         try:
             p_name = input('Product Name : ')
@@ -148,6 +151,7 @@ def register_prod():
 
 
 def trade_id(basket_id, member):
+    global cmd03
     while True:
         try:
             bsk_id = basket_id
@@ -251,8 +255,8 @@ def plot_function1(): # ฟังชันค์สำหรับพอท เ�
 
     plt.plot(df['hour'], df['total_sale'])
     plt.title('Total Sale by hour')
-    plt.xlabel('Sale')
-    plt.ylabel('Hour')
+    plt.xlabel('Hour')
+    plt.ylabel('Sale')
     plt.show()
 
 
